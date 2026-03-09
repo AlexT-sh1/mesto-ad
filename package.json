@@ -15,11 +15,14 @@
   "type": "commonjs",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "vite",
-    "build": "vite build"
+    "build": "vite build",
+    "preview": "vite preview"
   },
   "devDependencies": {
     "vite": "^7.3.1"
   }
+  
 }
+
+ 
