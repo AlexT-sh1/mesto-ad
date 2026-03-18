@@ -49,40 +49,15 @@ const checkInputValidity = (formElement, inputElement, settings) => {
   } else {
     hideInputError(formElement, inputElement, settings);
   }
+  
+  // Возвращаем результат валидации для использования в других функциях
+  return inputElement.validity.valid;
 };
 
-// Проверяет, есть ли хотя бы одно невалидное поле (с учетом trim() для всей строки)
+// Проверяет, есть ли хотя бы одно невалидное поле
 const hasInvalidInput = (inputList) => {
-  return inputList.some((inputElement) => {
-    const value = inputElement.value;
-    const trimmedValue = value.trim();
-    
-    // Для текстовых полей проверяем trim()
-    if (inputElement.type === 'text') {
-      // Проверка на пустую строку
-      if (isEmptyString(value)) {
-        return true;
-      }
-      // Проверка минимальной длины для обрезанной строки
-      if (inputElement.minLength && trimmedValue.length < inputElement.minLength) {
-        return true;
-      }
-      // Проверка паттерна на обрезанной строке
-      if (inputElement.pattern) {
-        const pattern = new RegExp(inputElement.pattern);
-        if (!pattern.test(trimmedValue)) {
-          return true;
-        }
-      }
-    }
-    
-    // Для URL полей
-    if (inputElement.type === 'url' && isEmptyString(value)) {
-      return true;
-    }
-    
-    return !inputElement.validity.valid;
-  });
+  // Просто проверяем validity.valid, так как checkInputValidity уже всё установил
+  return inputList.some((inputElement) => !inputElement.validity.valid);
 };
 
 // Делает кнопку неактивной
@@ -111,6 +86,10 @@ const setEventListeners = (formElement, settings) => {
   const inputList = Array.from(formElement.querySelectorAll(settings.inputSelector));
   const buttonElement = formElement.querySelector(settings.submitButtonSelector);
   
+  // Первоначальная проверка всех полей
+  inputList.forEach((inputElement) => {
+    checkInputValidity(formElement, inputElement, settings);
+  });
   toggleButtonState(inputList, buttonElement, settings);
   
   inputList.forEach((inputElement) => {
